@@ -302,9 +302,6 @@ for coin in datasets:
   print(coin)
   print(datasets[coin].count())
 
-for v in datasets['Monero']['Market Cap']:
-  print(v)
-
 for coin in datasets:
   print(coin)
   if 'Date' in datasets[coin]:
@@ -312,20 +309,15 @@ for coin in datasets:
   if 'Date(UTC)' in datasets[coin]:
       datasets[coin]['Date(UTC)'] = pd.to_datetime(datasets[coin]['Date(UTC)'])
   if 'Volume' in datasets[coin]:
-    datasets[coin]['Volume'] = datasets[coin]['Volume'].astype(object)
-    datasets[coin]['Volume'] = datasets[coin]['Volume'].str.replace("-","0").astype(object) #If we don't put this line, an error shows, but if we do, data gets corrupted
-    datasets[coin]['Volume'] = datasets[coin]['Volume'].str.replace(",","").astype(float)
+    datasets[coin]['Volume'] = datasets[coin]['Volume'].astype('str')
+    datasets[coin]['Volume'] = datasets[coin]['Volume'].apply(lambda x: x.replace("-","0"))
+    datasets[coin]['Volume'] = datasets[coin]['Volume'].apply(lambda x: x.replace(",",""))
+    datasets[coin]['Volume'] = datasets[coin]['Volume'].astype(np.float64)
   if 'Market Cap' in datasets[coin]:
-    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].astype(object)
-    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].str.replace("-","0").astype(object) #If we don't put this line, an error shows, but if we do, data gets corrupted
-    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].str.replace(",","").astype(float)
-
-"""With the data parsing, some data gets corrupted. 
-We don't know why.
-"""
-
-for v in datasets['Monero']['Market Cap']:
-  print(v)
+    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].astype('str')
+    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].apply(lambda x: x.replace("-","0"))
+    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].apply(lambda x: x.replace(",",""))
+    datasets[coin]['Market Cap'] = datasets[coin]['Market Cap'].astype(np.float64)
 
 """We will now check that every value is at datetime and float types, so we can work with this data.
 We detected that there are some int64 values, but they are not a problem for us, so it's fine.
